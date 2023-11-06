@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int            @id @default(autoincrement())
+  email            String         @unique
+  name             String
+  lastName         String
+  password         String         @unique
+  isVerified       Boolean        @default(false)
+  confimationToken String?
+  currencies       Currency[]
+  incomes          Income[]
+  Expense          Expense[]
+  UserCurrency     UserCurrency[]
+}
+
+model Currency {
+  id           Int            @id @default(autoincrement())
+  name         String
+  symbol       String
+  users        User[]
+  incomes      Income[]
+  Expense      Expense[]
+  UserCurrency UserCurrency[]
+}
+
+model UserCurrency {
+  userId              Int
+  currencyId          Int
+  weeklySpendingGoal  Int
+  monthlySpendingGoal Int
+  isDefault           Boolean  @default(false)
+  user                User     @relation(fields: [userId], references: [id])
+  currency            Currency @relation(fields: [currencyId], references: [id])
+
+  @@id([userId, currencyId])
+}
+
+model Income {
+  id         Int      @id @default(autoincrement())
+  name       String
+  amount     Int
+  currencyId Int
+  userId     Int
+  currency   Currency @relation(fields: [currencyId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id      Int       @id @default(autoincrement())
+  name    String
+  Expense Expense[]
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  amount      Int
+  description String
+  userId      Int
+  currencyId  Int
+  categoryId  Int
+  user        User     @relation(fields: [userId], references: [id])
+  currency    Currency @relation(fields: [currencyId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
+}
