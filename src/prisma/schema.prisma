@@ -20,8 +20,8 @@ model User {
   confimationToken String?
   currencies       Currency[]
   incomes          Income[]
-  Expense          Expense[]
-  UserCurrency     UserCurrency[]
+  expenses         Expense[]
+  userCurrencies   UserCurrency[]
 }
 
 model Currency {
@@ -30,15 +30,15 @@ model Currency {
   symbol       String
   users        User[]
   incomes      Income[]
-  Expense      Expense[]
+  expenses     Expense[]
   UserCurrency UserCurrency[]
 }
 
 model UserCurrency {
   userId              Int
   currencyId          Int
-  weeklySpendingGoal  Int
-  monthlySpendingGoal Int
+  weeklySpendingGoal  Int?
+  monthlySpendingGoal Int?
   isDefault           Boolean  @default(false)
   user                User     @relation(fields: [userId], references: [id])
   currency            Currency @relation(fields: [currencyId], references: [id])
@@ -47,29 +47,35 @@ model UserCurrency {
 }
 
 model Income {
-  id         Int      @id @default(autoincrement())
-  name       String
-  amount     Int
-  currencyId Int
-  userId     Int
-  currency   Currency @relation(fields: [currencyId], references: [id])
-  user       User     @relation(fields: [userId], references: [id])
+  id          Int      @id @default(autoincrement())
+  amount      Int
+  description String?
+  currencyId  Int
+  userId      Int
+  date        DateTime @default(now())
+  currency    Currency @relation(fields: [currencyId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 }
 
 model Category {
-  id      Int       @id @default(autoincrement())
-  name    String
-  Expense Expense[]
+  id       Int       @id @default(autoincrement())
+  name     String
+  expenses Expense[]
 }
 
 model Expense {
   id          Int      @id @default(autoincrement())
   amount      Int
-  description String
+  description String?
   userId      Int
   currencyId  Int
   categoryId  Int
+  date        DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
   currency    Currency @relation(fields: [currencyId], references: [id])
   category    Category @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 }
