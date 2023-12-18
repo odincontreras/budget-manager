@@ -75,7 +75,11 @@ export async function getUserIncomes(userId: number) {
       id: userId,
     },
     include: {
-      incomes: true,
+      incomes: {
+        orderBy: {
+          date: "asc",
+        },
+      },
     },
   });
 
@@ -140,7 +144,11 @@ export async function getUserExpenses(userId: number) {
       id: userId,
     },
     include: {
-      expenses: true,
+      expenses: {
+        orderBy: {
+          date: "asc",
+        },
+      },
     },
   });
 
@@ -173,6 +181,38 @@ export async function deleteUserExpense(userId: number, expenseId: number) {
       },
     },
   });
+}
+
+export async function updateUserExpense(
+  userId: number,
+  expenseId: number,
+  data: Partial<ExpenseWithoutId>,
+) {
+  const update = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      expenses: {
+        update: {
+          where: {
+            id: expenseId,
+          },
+          data,
+        },
+      },
+    },
+    include: {
+      expenses: {
+        orderBy: {
+          updatedAt: "desc",
+        },
+        take: 1,
+      },
+    },
+  });
+
+  return update;
 }
 
 export async function updateUserProfile({

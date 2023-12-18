@@ -196,6 +196,27 @@ export async function deleteUserExpense(
   }
 }
 
+export async function updateUserExpense(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> {
+  try {
+    const { userId, expenseId } = req.params;
+    const data = req.body;
+
+    const updatedExpense = await usersServices.updateUserExpense(
+      Number(userId),
+      Number(expenseId),
+      data,
+    );
+
+    return res.status(200).json(updatedExpense);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function updateUserProfile(
   req: Request,
   res: Response,

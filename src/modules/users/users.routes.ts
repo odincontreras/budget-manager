@@ -46,7 +46,8 @@ router
 
 router
   .route("/:userId/expenses/:expenseId")
-  .all(isAuth)
-  .delete(usersControllers.deleteUserExpense);
+  // .all(isAuth)
+  .delete(usersControllers.deleteUserExpense)
+  .patch(usersControllers.updateUserExpense);
 
 export default router;
