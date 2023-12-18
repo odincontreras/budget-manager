@@ -69,6 +69,38 @@ export async function createUserIncome(
   return newUserIncome;
 }
 
+export async function updateUserIncome(
+  userId: number,
+  incomeId: number,
+  data: IncomeWithoutId,
+) {
+  const update = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      incomes: {
+        update: {
+          where: {
+            id: incomeId,
+          },
+          data,
+        },
+      },
+    },
+    include: {
+      incomes: {
+        orderBy: {
+          updatedAt: "desc",
+        },
+        take: 1,
+      },
+    },
+  });
+
+  return update;
+}
+
 export async function getUserIncomes(userId: number) {
   const userIncomes = await prisma.user.findUnique({
     where: {

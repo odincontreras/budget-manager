@@ -31,7 +31,8 @@ router
 router
   .route("/:userId/incomes/:incomeId")
   .all(isAuth)
-  .delete(usersControllers.deleteUserIncome);
+  .delete(usersControllers.deleteUserIncome)
+  .patch(usersControllers.updateUserIncome);
 
 router
   .route("/:userId/expenses")
@@ -46,7 +47,7 @@ router
 
 router
   .route("/:userId/expenses/:expenseId")
-  // .all(isAuth)
+  .all(isAuth)
   .delete(usersControllers.deleteUserExpense)
   .patch(usersControllers.updateUserExpense);
 

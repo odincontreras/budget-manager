@@ -78,6 +78,27 @@ export async function createUserIncome(
   }
 }
 
+export async function updateUserIncome(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> {
+  try {
+    const { userId, incomeId } = req.params;
+    const data = req.body;
+
+    const updatedIncome = await usersServices.updateUserIncome(
+      Number(userId),
+      Number(incomeId),
+      data,
+    );
+
+    return res.status(200).json(updatedIncome);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getUserIncomes(
   req: Request,
   res: Response,
