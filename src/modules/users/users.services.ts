@@ -101,16 +101,21 @@ export async function updateUserIncome(
   return update;
 }
 
-export async function getUserIncomes(userId: number) {
+export async function getUserIncomes(
+  userId: number,
+  query: Record<string, unknown>,
+) {
+  const where = query?.filters as Prisma.IncomeWhereInput;
+  const orderBy = query?.orderBy as Prisma.IncomeOrderByWithRelationInput;
+
   const userIncomes = await prisma.user.findUnique({
     where: {
       id: userId,
     },
     include: {
       incomes: {
-        orderBy: {
-          date: "asc",
-        },
+        where,
+        orderBy,
       },
     },
   });
