@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma";
-import { User, UserCurrency } from "@prisma/client";
+import { Prisma, User, UserCurrency } from "@prisma/client";
 import {
   ExpenseWithoutId,
   IncomeWithoutId,
@@ -170,16 +170,21 @@ export async function createUserExpense(
   return newUserExpense;
 }
 
-export async function getUserExpenses(userId: number) {
+export async function getUserExpenses(
+  userId: number,
+  query: Record<string, unknown>,
+) {
+  const where = query?.filters as Prisma.ExpenseWhereInput;
+  const orderBy = query?.orderBy as Prisma.ExpenseOrderByWithRelationInput;
+
   const userExpenses = await prisma.user.findUnique({
     where: {
       id: userId,
     },
     include: {
       expenses: {
-        orderBy: {
-          date: "asc",
-        },
+        where,
+        orderBy,
       },
     },
   });
@@ -266,7 +271,7 @@ export async function updateUserProfile({
     });
 
     await prisma.userCurrency.createMany({
-      data: currencies,
+      data: currencies.map((currency) => ({ ...currency, userId })),
     });
   }
 

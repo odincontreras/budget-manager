@@ -176,7 +176,12 @@ export async function getUserExpenses(
 ): Promise<Response | void> {
   try {
     const { userId } = req.params;
-    const userExpenses = await usersServices.getUserExpenses(Number(userId));
+    const query = req.query;
+
+    const userExpenses = await usersServices.getUserExpenses(
+      Number(userId),
+      query,
+    );
 
     return res.status(200).json(userExpenses);
   } catch (error) {
