@@ -6,6 +6,8 @@ const router = Router();
 
 router.route("/:id").all(isAuth).delete(usersControllers.deleteOne);
 
+router.route("/verify-token").all(isAuth).get(usersControllers.deleteOne);
+
 router
   .route("/:userId/profile")
   .all(isAuth)

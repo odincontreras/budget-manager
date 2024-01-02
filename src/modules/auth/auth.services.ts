@@ -28,10 +28,6 @@ export async function loginUser(email: string, password: string) {
 }
 
 export async function registerUser(newUser: UserWithoutId): Promise<User> {
-  console.log(
-    "🚀 ~ file: auth.services.ts:28 ~ registerUser ~ newUser:",
-    newUser,
-  );
   const alreadyExists = await prisma.user.findUnique({
     where: {
       email: newUser.email,
@@ -47,6 +43,21 @@ export async function registerUser(newUser: UserWithoutId): Promise<User> {
   const user = await prisma.user.create({
     data: { ...newUser, password: encryptedPassword },
   });
+
+  return user;
+}
+
+export async function getLoggedUser(userId: number) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      userCurrencies: true,
+    },
+  });
+
+  if (!user) throwError(ERROR_PROPS.NOT_FOUND);
 
   return user;
 }

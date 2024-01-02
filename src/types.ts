@@ -1,3 +1,4 @@
+import { Request } from "express";
 import {
   Category,
   Currency,
@@ -18,3 +19,7 @@ export type CategoryWithoutId = Omit<Category, "id">;
 export type UserCurrencyWithoutId = Omit<UserCurrency, "id">;
 
 export type IncomeWithoutId = Omit<Income, "id">;
+
+export interface AuthenticatedRequest extends Request {
+  user?: { id: number; email: string };
+}
