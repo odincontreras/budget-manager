@@ -107,6 +107,8 @@ export async function getUserIncomes(
 ) {
   const where = query?.filters as Prisma.IncomeWhereInput;
   const orderBy = query?.orderBy as Prisma.IncomeOrderByWithRelationInput;
+  const take = query?.take as number;
+  const skip = query?.skip as number;
 
   const userIncomes = await prisma.user.findUnique({
     where: {
@@ -116,6 +118,13 @@ export async function getUserIncomes(
       incomes: {
         where,
         orderBy,
+        take,
+        skip,
+      },
+      _count: {
+        select: {
+          incomes: true,
+        },
       },
     },
   });
@@ -181,6 +190,8 @@ export async function getUserExpenses(
 ) {
   const where = query?.filters as Prisma.ExpenseWhereInput;
   const orderBy = query?.orderBy as Prisma.ExpenseOrderByWithRelationInput;
+  const take = query?.take as number;
+  const skip = query?.skip as number;
 
   const userExpenses = await prisma.user.findUnique({
     where: {
@@ -190,6 +201,13 @@ export async function getUserExpenses(
       expenses: {
         where,
         orderBy,
+        take,
+        skip,
+      },
+      _count: {
+        select: {
+          expenses: true,
+        },
       },
     },
   });
