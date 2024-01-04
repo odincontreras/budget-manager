@@ -5,6 +5,8 @@ import {
   IncomeWithoutId,
   UserCurrencyWithoutId,
 } from "../../types";
+import throwError from "../../utils/throwError";
+import { ERROR_PROPS } from "../../constants";
 
 export async function deleteUser(id: number): Promise<void> {
   await prisma.user.delete({
@@ -132,10 +134,30 @@ export async function getUserIncomes(
   return userIncomes;
 }
 
-export async function getUserIncomesTotal(userId: number) {
+export async function getUserIncomesTotal(
+  userId: number,
+  query: Record<string, unknown>,
+) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      userCurrencies: true,
+    },
+  });
+
+  if (!user) throwError(ERROR_PROPS.NOT_FOUND);
+
+  const defaultCurrencyId = user.userCurrencies.find(
+    (currency) => currency.isDefault,
+  )?.currencyId;
+
   const userIncomesTotal = await prisma.income.aggregate({
     where: {
       userId,
+      currencyId: defaultCurrencyId,
+      ...query,
     },
     _sum: {
       amount: true,
@@ -215,10 +237,30 @@ export async function getUserExpenses(
   return userExpenses;
 }
 
-export async function getUserExpensesTotal(userId: number) {
+export async function getUserExpensesTotal(
+  userId: number,
+  query: Record<string, unknown>,
+) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      userCurrencies: true,
+    },
+  });
+
+  if (!user) throwError(ERROR_PROPS.NOT_FOUND);
+
+  const defaultCurrencyId = user.userCurrencies.find(
+    (currency) => currency.isDefault,
+  )?.currencyId;
+
   const userExpensesTotal = await prisma.expense.aggregate({
     where: {
       userId,
+      currencyId: defaultCurrencyId,
+      ...query,
     },
     _sum: {
       amount: true,

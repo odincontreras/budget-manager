@@ -126,9 +126,11 @@ export async function getUserIncomesTotal(
 ): Promise<Response | void> {
   try {
     const { userId } = req.params;
+    const query = req.query;
 
     const userIncomesTotal = await usersServices.getUserIncomesTotal(
       Number(userId),
+      query,
     );
 
     return res.status(200).json(userIncomesTotal);
@@ -200,8 +202,11 @@ export async function getUserExpensesTotal(
 ): Promise<Response | void> {
   try {
     const { userId } = req.params;
+    const query = req.query;
+
     const userExpensesTotal = await usersServices.getUserExpensesTotal(
       Number(userId),
+      query,
     );
 
     return res.status(200).json(userExpensesTotal);
