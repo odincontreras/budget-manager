@@ -6,14 +6,17 @@ const routes = express.Router();
 
 const addRoutes = async () => {
   const modulesPath = path.join(process.cwd(), "src", "modules");
+  const appPath = path.join(process.cwd(), "src", "index");
 
   const modules = fs.readdirSync(modulesPath);
+
+  const fileExtension = path.extname(appPath);
 
   for (const module of modules) {
     const routerPath = path.join(
       `${modulesPath}`,
       `${module}`,
-      `${module}.routes.ts`,
+      `${module}.routes.${fileExtension}`,
     );
 
     const existRouterPath = fs.existsSync(routerPath);
