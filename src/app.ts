@@ -18,9 +18,10 @@ app.use(
 );
 app.use(express.json());
 app.use(routes);
-app.get("/ping", (_, res) => {
-  res.send("pong");
+app.get("/", (_, res) => {
+  res.send("API is running");
 });
+app.get("/healthcheck", (_, res) => res.status(200).send("OK"));
 app.use(errorHandler);
 
 export default app;
