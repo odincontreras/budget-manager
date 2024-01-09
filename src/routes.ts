@@ -5,12 +5,12 @@ import path from "path";
 const routes = express.Router();
 
 const addRoutes = async () => {
-  const modulesPath = path.join(process.cwd(), "src", "modules");
-  const appPath = path.join(process.cwd(), "src", "index");
+  const modulesPath = path.join(__dirname, "modules");
+  const folderExecution = __dirname.split("/").pop();
+
+  const fileExtension = folderExecution === "src" ? "ts" : "js";
 
   const modules = fs.readdirSync(modulesPath);
-
-  const fileExtension = path.extname(appPath);
 
   for (const module of modules) {
     const routerPath = path.join(
@@ -22,15 +22,11 @@ const addRoutes = async () => {
     const existRouterPath = fs.existsSync(routerPath);
 
     if (existRouterPath) {
-      const fileContent = fs.readFileSync(routerPath, "utf-8");
-
-      // Check for export default router statement
-      const exportDefaultRouterRegex = /export\sdefault\srouter/;
-      if (exportDefaultRouterRegex.test(fileContent)) {
-        import(routerPath).then((moduleRouter) => {
+      import(routerPath).then((moduleRouter) => {
+        if (moduleRouter.default) {
           routes.use(`/${module}`, moduleRouter.default);
-        });
-      }
+        }
+      });
     }
   }
 };
